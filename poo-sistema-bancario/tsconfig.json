@@ -1,0 +1,37 @@
+{
+  // Este archivo le dice a TypeScript CÓMO convertir nuestro código .ts
+  // a JavaScript (.js), que es lo que Node.js entiende y ejecuta.
+  "compilerOptions": {
+    // Qué versión de JavaScript generamos. ES2022 es moderna y Node 22 la soporta.
+    "target": "ES2022",
+
+    // Sistema de módulos. "commonjs" es el que usa Node por defecto y también
+    // el que usa Nest.js. Nos permite escribir los imports SIN la extensión:
+    //   import { Banco } from "./clases/Banco";     ✅
+    "module": "commonjs",
+
+    // Carpeta donde está el código fuente (lo que escribimos nosotros).
+    "rootDir": "src",
+
+    // Carpeta donde TypeScript deja el JavaScript ya compilado.
+    // Esta carpeta NO se sube a git, se genera con "npm run build".
+    "outDir": "dist",
+
+    // El modo estricto activa todas las revisiones de TypeScript.
+    // Recomendado siempre: te avisa de errores antes de ejecutar el programa.
+    "strict": true,
+
+    // Ayuda a que los "import" de librerías de JavaScript funcionen bien.
+    "esModuleInterop": true,
+
+    // Evita problemas entre Windows/Linux por mayúsculas y minúsculas
+    // en los nombres de archivos.
+    "forceConsistentCasingInFileNames": true,
+
+    // No revisar los archivos de tipos de las librerías (acelera la compilación).
+    "skipLibCheck": true
+  },
+
+  // Qué archivos debe compilar: todos los .ts que estén dentro de src/.
+  "include": ["src/**/*.ts"]
+}
