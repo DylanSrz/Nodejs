@@ -1,23 +1,15 @@
 {
-  "name": "nodejs",
+  "name": "riwibank",
   "version": "1.0.0",
-  "description": "Estructura de trabajo para Node.js ya completada y lista para desarrollar. Repositorio para practicar diferentes temas de desarrollo por ramas. Una rama un contexto diferente.",
+  "description": "",
   "main": "app.js",
   "scripts": {
-    "dev" : "npx tsx watch ./src/app.ts"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/DylanSrz/Nodejs.git"
+    "dev": "npx tsx watch ./src/app.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
-  "bugs": {
-    "url": "https://github.com/DylanSrz/Nodejs/issues"
-  },
-  "homepage": "https://github.com/DylanSrz/Nodejs#readme",
   "devDependencies": {
     "tsx": "^4.23.1",
     "typescript": "^7.0.2"

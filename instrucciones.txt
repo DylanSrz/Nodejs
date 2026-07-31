@@ -1,0 +1,79 @@
+1. Clase CuentaBancaria
+
+Crear una clase llamada CuentaBancaria con las siguientes propiedades:
+
+numeroCuenta
+titular
+saldo
+activa (inicia en true)
+
+Implementar los siguientes métodos:
+
+depositar(monto)
+retirar(monto)
+mostrarInformacion()
+
+Reglas:
+
+No permitir depósitos menores o iguales a 0.
+No permitir retiros mayores al saldo disponible.
+Mostrar mensajes indicando si la operación fue
+exitosa o no.
+
+2. Clase CuentaAhorros
+
+Heredar de CuentaBancaria.
+
+Agregar la propiedad:
+
+tasaInteres
+
+Sobrescribir el método:
+
+retirar()
+
+Regla:
+
+No permitir retirar más del 80% del saldo disponible en una sola transacción.
+
+3. Clase CuentaCorriente
+
+Heredar de CuentaBancaria.
+
+Agregar la propiedad:
+
+limiteSobregiro
+
+Sobrescribir:
+
+retirar()
+
+Regla:
+
+Permitir retirar dinero aunque el saldo no sea suficiente, siempre que no se supere el límite del sobregiro.
+
+4. Crear una clase llamada Banco.
+
+Debe administrar todas las cuentas registradas (lista de cuentas)
+
+Implementar los siguientes métodos:
+
+agregarCuenta()
+
+listarCuentas()
+
+buscarCuenta(numeroCuenta)
+
+depositar(numeroCuenta, monto)
+
+retirar(numeroCuenta, monto)
+
+- Propiedad estática
+
+El banco desea conocer cuántas cuentas han sido creadas desde que inició el sistema.
+
+Implementar en CuentaBancaria:
+
+static totalCuentas = 0;
+
+Incrementar el contador automáticamente desde el constructor.
