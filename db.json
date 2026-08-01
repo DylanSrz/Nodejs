@@ -1,0 +1,53 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Jairo",
+      "email": "jairo@gmail.com",
+      "identificacion": "10457895",
+      "password": "abc123"
+    },
+    {
+      "id": 2,
+      "name": "Carlos Mendoza",
+      "email": "carlos@gmail.com",
+      "identificacion": "10457896",
+      "password": "password123"
+    },
+    {
+      "id": 3,
+      "name": "Ana Rodriguez",
+      "email": "ana@gmail.com",
+      "identificacion": "10457897",
+      "password": "securePass78"
+    },
+    {
+      "id": 4,
+      "name": "Luisa Gomez",
+      "email": "luisa@gmail.com",
+      "identificacion": "10457898",
+      "password": "mypassword99"
+    },
+    {
+      "name": "Nestor",
+      "email": "nestor@gmail.com",
+      "identificacion": "104as5741",
+      "password": "abcd12asd345",
+      "id": 5
+    },
+    {
+      "name": "Nestor",
+      "email": "nestor@gmail.com",
+      "identificacion": "104as5741",
+      "password": "abcd12asd345",
+      "id": 6
+    },
+    {
+      "name": "calitos",
+      "email": "nestor@gmail.com",
+      "identificacion": "104as5741",
+      "password": "abcd12asd345",
+      "id": 7
+    }
+  ]
+}

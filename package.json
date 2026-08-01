@@ -4,7 +4,8 @@
   "description": "Estructura de trabajo para Node.js ya completada y lista para desarrollar. Repositorio para practicar diferentes temas de desarrollo por ramas. Una rama un contexto diferente.",
   "main": "app.js",
   "scripts": {
-    "dev" : "npx tsx watch ./src/app.ts"
+    "dev": "npx tsx watch ./src/app.ts",
+    "db": "json-server db.json"
   },
   "repository": {
     "type": "git",
@@ -21,5 +22,8 @@
   "devDependencies": {
     "tsx": "^4.23.1",
     "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "json-server": "^0.17.4"
   }
 }
