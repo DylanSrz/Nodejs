@@ -2,52 +2,80 @@
   "users": [
     {
       "id": 1,
-      "name": "Jairo",
-      "email": "jairo@gmail.com",
+      "name": "Jairo Alfonso",
+      "email": "jairo.alfonso@gmail.com",
       "identificacion": "10457895",
-      "password": "abc123"
+      "password": "abc123password"
     },
     {
       "id": 2,
       "name": "Carlos Mendoza",
-      "email": "carlos@gmail.com",
+      "email": "carlos.mendoza@gmail.com",
       "identificacion": "10457896",
       "password": "password123"
     },
     {
       "id": 3,
       "name": "Ana Rodriguez",
-      "email": "ana@gmail.com",
+      "email": "ana.rodriguez@gmail.com",
       "identificacion": "10457897",
       "password": "securePass78"
     },
     {
       "id": 4,
       "name": "Luisa Gomez",
-      "email": "luisa@gmail.com",
+      "email": "luisa.gomez@gmail.com",
       "identificacion": "10457898",
       "password": "mypassword99"
     },
     {
-      "name": "Nestor",
-      "email": "nestor@gmail.com",
-      "identificacion": "104as5741",
-      "password": "abcd12asd345",
-      "id": 5
+      "id": 5,
+      "name": "Nestor Urbina",
+      "email": "nestor.urbina@gmail.com",
+      "identificacion": "10457899",
+      "password": "abcd12asd345"
     },
     {
-      "name": "Nestor",
-      "email": "nestor@gmail.com",
-      "identificacion": "104as5741",
-      "password": "abcd12asd345",
-      "id": 6
+      "id": 6,
+      "name": "Dylan Suarez",
+      "email": "dylan.suarez@gmail.com",
+      "identificacion": "10457413",
+      "password": "ClaveSegura123"
     },
     {
-      "name": "calitos",
-      "email": "nestor@gmail.com",
-      "identificacion": "104as5741",
-      "password": "abcd12asd345",
+      "name": "Elena Palacios",
+      "email": "elena.palacios@gmail.com",
+      "identificacion": "10882341",
+      "password": "elena2026pass",
       "id": 7
+    },
+    {
+      "name": "Ricardo Torres",
+      "email": "ricardo.torres@gmail.com",
+      "identificacion": "11223344",
+      "password": "ricardopass99",
+      "id": 8
+    },
+    {
+      "name": "Sofia Castro",
+      "email": "sofia.castro@gmail.com",
+      "identificacion": "10556677",
+      "password": "sofiaSecure44",
+      "id": 9
+    },
+    {
+      "name": "Mateo Herrera",
+      "email": "mateo.herrera@gmail.com",
+      "identificacion": "10998811",
+      "password": "mateoPassword1",
+      "id": 10
+    },
+    {
+      "name": "Dylan Suarez",
+      "email": "dylan@gmail.com",
+      "identificacion": "1045741377",
+      "password": "ClaveSegura123",
+      "id": 11
     }
   ]
 }
