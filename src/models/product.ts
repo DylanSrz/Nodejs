@@ -1,11 +1,13 @@
 import { DataTypes, Model } from "sequelize";
 import  db  from "../config/db.js";
+import Category from "./category.js";
 
 class Product extends Model{
     declare id: number
     declare name: string
     declare price: number
     declare status: boolean
+    declare category_id: number
 }
 
 Product.init(
@@ -26,11 +28,16 @@ Product.init(
         status: {
             type: DataTypes.BOOLEAN,
             defaultValue: true
+        },
+        category_id: {
+            type: DataTypes.INTEGER
+            // allowNull: false
         }
     }, {
         sequelize: db,
-        tableName: 'Product'
     }
 )
+
+Product.belongsTo(Category, {foreignKey: 'category_id'})
 
 export default Product

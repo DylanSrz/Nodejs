@@ -19,7 +19,6 @@ Category.init(
         }
     }, {
         sequelize: db,
-        tableName: 'Product'
     }
 )
 

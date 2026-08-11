@@ -2,6 +2,7 @@ import express, { Router, type Request, type Response } from "express";
 import "dotenv/config";
 import  db  from "./config/db.js";
 import Product from "./models/product.js";
+import Category from "./models/category.js";
 import routerProduct from "./routes/product.roules.js";
 
 
@@ -12,11 +13,12 @@ app.use('/product', routerProduct)
 
 const {PORT} = process.env
 
-app.get('/user', async (req: Request, res: Response) => {
-    const user = await db.query('SELECT * FROM users')
+// app.get('/user', async (req: Request, res: Response) => {
 
-    res.json({user})
-})
+//     const { rows: users } = await db.query('select * from users');
+
+//     res.json({ users })
+// })
 
 starServer()
 
@@ -27,7 +29,7 @@ async function starServer() {
         await db.authenticate()
         console.log('DB Online')
 
-        await db.sync()
+        await db.sync({alter: true})
         console.log('DB sincronizada')
 
     } catch(error) {
