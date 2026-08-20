@@ -9,11 +9,11 @@ router.post('/register', async (req: Request, res: Response) => {
 
     const {name, email, password} = req.body
 
-    // const emailExist = await User.find({email: email})
+    const emailExist = await User.findOne({email})
 
-    // if (emailExist) {
-    //     return res.status(409).json('usuario ya existe')
-    // }
+    if (emailExist) {
+        return res.status(409).json('usuario ya existe')
+    }
 
     const passwordHash = bcrypt.hashSync(password, 10)
 

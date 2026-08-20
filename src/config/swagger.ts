@@ -10,24 +10,6 @@ const options: swaggerJSDoc.Options = {
         },
         components: {
             schemas: {
-                Task: {
-                    type: "object",
-                    required: ["name", "status"],
-                    properties: {
-                        id: {
-                            type: "string",
-                            example: "fvbSVKSLVJNLdvk"
-                        },
-                        name: {
-                            type: "string",
-                            example: "nueva tarea"
-                        },
-                        status: {
-                            type: "string",
-                            example: "pending|completed"
-                        }
-                    }
-                },
                 Tl: {
                     type: "object",
                     required: ["name", "email","jornada"],
