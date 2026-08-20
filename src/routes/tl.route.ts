@@ -23,7 +23,35 @@ router.get('/:id', async (req: Request, res: Response) => {
     res.json(tl)
 })
 
-
+/**
+ * @swagger
+ * /task:
+ *   post:
+ *     summary: Crear una tarea
+ *     tags:
+ *       - Task
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - status
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: Nueva tarea
+ *               status:
+ *                 type: string
+ *                 example: pending
+ *     responses:
+ *       201:
+ *         description: tarea creado
+ *       400:
+ *         description: Datos inválidos
+ */
 // POST // crear un TL
 router.post('/', validateRequest(createTlSchema), async (req: Request, res: Response) => {
 

@@ -2,6 +2,8 @@ import express, { type Request, type Response } from 'express'
 import { Coder } from '../models/coder.model.js'
 import { Ruta } from '../models/ruta.model.js'
 import { Clan } from '../models/clan.model.js'
+import { validateRequest } from '../middleware/validateRequest.js'
+import { createCoderSchema } from '../dto/create-coder.schema.js'
 
 const router = express.Router()
 
@@ -53,7 +55,7 @@ router.get('/ruta/:id', async (req: Request, res: Response) => {
 
 
 // POST // crear un coder
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', validateRequest(createCoderSchema),async (req: Request, res: Response) => {
 
     const {name, email, clan} = req.body
 
@@ -70,7 +72,7 @@ router.post('/', async (req: Request, res: Response) => {
 })
 
 // PUT // actualizar datos de un coder
-router.put('/:id', async (req:Request, res: Response) => {
+router.put('/:id', validateRequest(createCoderSchema),async (req:Request, res: Response) => {
 
     const {name, email, clan} = req.body
 

@@ -1,5 +1,7 @@
 import express, { type Request, type Response } from 'express'
 import { Clan } from '../models/clan.model.js'
+import { validateRequest } from '../middleware/validateRequest.js'
+import { createClanSchema } from '../dto/create-clan.schema.js'
 
 const router = express.Router()
 
@@ -22,7 +24,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 })
 
 // POST // crear un clan
-router.post('/', async ( req: Request, res: Response) => {
+router.post('/', validateRequest(createClanSchema),async ( req: Request, res: Response) => {
 
     const {name, sala, jornada, ruta} = req.body
 
