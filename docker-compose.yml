@@ -1,0 +1,20 @@
+name: postgres_riwiHack
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres-riwiHack
+
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin1234
+      POSTGRES_DB: riwiHack
+
+    ports:
+      - "5433:5432"
+
+    volumes:
+      - postgres_data_riwiHack:/var/lib/postgresql/data
+
+volumes:
+  postgres_data_riwiHack:
