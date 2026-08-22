@@ -1,44 +1,107 @@
 import { DataTypes, Model } from "sequelize";
 import db from "../config/db.js";
 
+// Representa la tabla "type_identification" de PostgreSQL.
 class Type_identification extends Model {
 
-    declare id: string
-    declare name: string
-    declare code_name: string
+    // Identificador único de la tabla.
+    declare id: string;
 
+    // Nombre descriptivo del tipo de identificación.
+    declare name: string;
+
+    // Código interno del tipo de identificación.
+    declare code_name: string;
 }
 
 Type_identification.init(
     {
+        // ==========================================
+        // ID
+        // ==========================================
         id: {
+            // PostgreSQL: uuid
             type: DataTypes.UUID,
+
+            // Sequelize genera automáticamente un UUID
+            // cuando se crea un nuevo registro.
             defaultValue: DataTypes.UUIDV4,
-            primaryKey: true
+
+            // Corresponde a PRIMARY KEY.
+            primaryKey: true,
         },
+
+        // ==========================================
+        // NAME
+        // ==========================================
         name: {
-            type: DataTypes.STRING,
+            // PostgreSQL: varchar(255)
+            type: DataTypes.STRING(255),
+
+            // El campo no puede ser NULL.
+            allowNull: false,
+
+            // No pueden existir dos tipos de identificación
+            // con el mismo nombre.
             unique: true,
-            allowNull: false
         },
+
+        // ==========================================
+        // CODE_NAME
+        // ==========================================
         code_name: {
-            type: DataTypes.STRING,
+            // PostgreSQL: varchar(255)
+            type: DataTypes.STRING(255),
+
+            // El campo es obligatorio.
+            allowNull: false,
+
+            // El código debe ser único.
             unique: true,
-            allowNull: false
-        }
-    }, {
-        sequelize: db
+        },
+    },
+    {
+        // Conexión a PostgreSQL.
+        sequelize: db,
+
+        // Indicamos explícitamente el nombre de la tabla.
+        tableName: "type_identification",
+
+        // La tabla PostgreSQL no tiene createdAt ni updatedAt.
+        timestamps: false,
     }
-)
+);
 
-Type_identification.beforeCreate(type_identification => {
-    type_identification.name = type_identification.name.toLowerCase()
-    type_identification.code_name = type_identification.code_name.toLowerCase()
-})
+// ==========================================
+// HOOK: BEFORE CREATE
+// ==========================================
 
-Type_identification.beforeUpdate(type_identification => {
-    type_identification.name = type_identification.name.toLowerCase()
-    type_identification.code_name = type_identification.code_name.toLowerCase()
-})
+// Se ejecuta antes de insertar un nuevo registro.
+//
+// Convierte "name" y "code_name" a minúsculas
+// para mantener un formato consistente.
+Type_identification.beforeCreate((type_identification) => {
 
-export default Type_identification
+    type_identification.name = type_identification.name.toLowerCase();
+    type_identification.code_name = type_identification.code_name.toLowerCase();
+});
+
+
+// ==========================================
+// HOOK: BEFORE UPDATE
+// ==========================================
+
+// Se ejecuta antes de actualizar un registro.
+//
+// Garantiza que cuando se modifiquen estos campos
+// también se almacenen en minúsculas.
+Type_identification.beforeUpdate((type_identification) => {
+
+    type_identification.name = type_identification.name.toLowerCase();
+    type_identification.code_name = type_identification.code_name.toLowerCase();
+});
+
+
+// Exportamos el modelo para poder utilizarlo
+// en controllers, services, relaciones, etc.
+export default Type_identification;

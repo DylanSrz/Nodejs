@@ -2,10 +2,8 @@ import { DataTypes, Model } from "sequelize";
 import db from "../config/db.js";
 
 class Roles extends Model {
-
-    declare id: string
+    declare id: string;
     declare name: string;
-
 }
 
 Roles.init(
@@ -13,24 +11,31 @@ Roles.init(
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
-            primaryKey: true
+            primaryKey: true,
         },
+
         name: {
-            type: DataTypes.ENUM('admin', 'team leader', 'coder'),
+            type: DataTypes.STRING(255),
+            allowNull: false,
             unique: true,
-            allowNull: false
-        }
-    }, {
-        sequelize: db
+            validate: {
+                isIn: [["admin", "team leader", "coder"]],
+            },
+        },
+    },
+    {
+        sequelize: db,
+        tableName: "roles",
+        timestamps: false,
     }
-)
+);
 
-Roles.beforeCreate(roles => {
-    roles.name = roles.name.toLowerCase();
-})
+Roles.beforeCreate((role) => {
+    role.name = role.name.toLowerCase();
+});
 
-Roles.beforeUpdate(roles => {
-    roles.name = roles.name.toLowerCase();
-})
+Roles.beforeUpdate((role) => {
+    role.name = role.name.toLowerCase();
+});
 
-export default Roles
+export default Roles;
