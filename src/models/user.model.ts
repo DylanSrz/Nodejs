@@ -4,7 +4,7 @@ import db from "../config/db.js";
 
 import Address_user from "./address_user.model.js";
 import Identification from "./identification.model.js";
-import Roles from "./roles.model.js";
+import Roles from "./role.model.js";
 
 
 class User extends Model {
