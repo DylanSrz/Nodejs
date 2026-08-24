@@ -4,7 +4,9 @@
   "description": "Estructura de trabajo para Node.js ya completada y lista para desarrollar. Repositorio para practicar diferentes temas de desarrollo por ramas. Una rama un contexto diferente.",
   "main": "app.js",
   "scripts": {
-    "dev": "npx tsx watch ./src/app.ts"
+    "dev": "npx tsx watch ./src/app.ts",
+    "seed": "tsx src/config/seeders-up.ts",
+    "seed:down": "tsx src/config/seeders-down.ts"
   },
   "repository": {
     "type": "git",
@@ -30,6 +32,7 @@
     "pg": "^8.23.0",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.8",
+    "umzug": "^3.8.3",
     "zod": "^4.4.3"
   }
 }
