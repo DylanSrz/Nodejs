@@ -41,11 +41,18 @@ start()
 
 async function start()  {
 
-    await db.authenticate()
+    try {
 
-    // await db.sync({alter: true})
+        
+        await db.authenticate()
 
-    app.listen(PORT, () => {
-        console.log(`Server running in PORT: ${PORT}`)
-    })
+        // await db.sync({alter: true})
+
+        app.listen(PORT, () => {
+            console.log(`Server running in PORT: ${PORT}`)
+        })
+    } catch(error) {
+        console.log(error)
+        
+    }
 }

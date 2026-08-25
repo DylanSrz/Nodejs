@@ -1,4 +1,5 @@
 import { DataTypes, Model } from "sequelize";
+import * as bcrypt from 'bcrypt'
 
 import db from "../config/db.js";
 
@@ -215,13 +216,15 @@ User.init(
 //
 // Convierte nombre, apellido y email
 // a minúsculas antes de guardarlos.
-User.beforeCreate((user) => {
+User.beforeCreate(async (user) => {
 
     user.first_name = user.first_name.toLowerCase();
 
     user.last_name = user.last_name.toLowerCase();
 
     user.email = user.email.toLowerCase();
+
+    user.password_hash = await bcrypt.hash(user.password_hash, 10)
 });
 
 // Se ejecuta antes de actualizar un usuario.
