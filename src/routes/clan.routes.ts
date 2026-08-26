@@ -1,10 +1,9 @@
-import express, { type Request, type Response } from 'express';
-import Clan from '../models/clan.model.js';
+import express from 'express';
+import { createClan, getClan } from '../controllers/clan.controller.js';
 
 const router = express.Router();
 
-router.get('/', async (req: Request, res: Response) => {
-    res.json({ message: 'clan' });
-});
+router.get('/', getClan);
+router.post('/', createClan)
 
 export default router;
