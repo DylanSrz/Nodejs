@@ -46,13 +46,13 @@ export async function up({
             id: randomUUID(),
             name: "riwi barranquilla",
             city_id: barranquilla.id,
-            address: "calle 40 No. 46 - 223",
+            address: "calle 40 no. 46 - 223",
         },
         {
             id: randomUUID(),
             name: "riwi medellín",
             city_id: medellin.id,
-            address: "calle 16 No. 55 - 129, piso 3",
+            address: "calle 16 no. 55 - 129, piso 3",
         },
     ]);
 }
