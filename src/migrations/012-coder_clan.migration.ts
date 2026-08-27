@@ -27,6 +27,16 @@ export async function up({context}: {context: QueryInterface}) {
         end_date: {
             type: DataTypes.DATEONLY,
             allowNull: true,
+        },
+        createdAt: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            defaultValue: DataTypes.NOW
+        },
+        updatedAt: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            defaultValue: DataTypes.NOW
         }
         
     })
