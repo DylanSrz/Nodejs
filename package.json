@@ -5,6 +5,9 @@
   "main": "app.js",
   "scripts": {
     "dev": "npx tsx watch ./src/app.ts",
+    "migrate": "tsx src/config/migrate-up.ts",
+    "migrate:reverse": "tsx src/config/migrate-down.ts",
+    "migrate:reset": "tsx src/config/migrate-reset.ts",
     "seed": "tsx src/config/seeders-up.ts",
     "seed:down": "tsx src/config/seeders-down.ts"
   },
