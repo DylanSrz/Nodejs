@@ -18,21 +18,21 @@ export function verifyToken(req: Request, res: Response, next: NextFunction) {
     try {
         const secretKey = process.env.JWT_SECRET
         const payload = jwt.verify(token, secretKey!);
-        (res as any).user = payload
+        (req as any).user = payload
         next();
     } catch(error) {
         return res.status(403).json({message: 'Token not valid or expired'});
     }
 }
 
+// validar que el token tiene el rol solicitado.
 export const checkRole = (...Roles: string[]) => {
     return (req: Request, res: Response, next: NextFunction) => {
         const user = (req as any).user
 
-        if (!Roles.includes(!user || user.role)) {
+        if (!user || !Roles.includes(user.role)) {
             return res.status(403).json({message: 'No tiene permiso para esta acción.'})
         }
-
         next()
     }
 }
