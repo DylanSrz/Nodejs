@@ -34,7 +34,6 @@ class User extends Model {
     // Indica si el usuario está activo.
     declare is_active: boolean;
 
-
     // FOREIGN KEYS
     // ==================================================
 

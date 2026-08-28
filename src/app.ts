@@ -15,6 +15,7 @@ import routerRoom from './routes/room.routes.js'
 import routerUser from './routes/user.routes.js'
 import routerClan from './routes/clan.routes.js'
 import routerCoderClan from './routes/coder_clan.routes.js'
+import routerAuth from './routes/auth.routes.js'
 
 
 const {PORT} = process.env 
@@ -36,6 +37,7 @@ app.use('/room', routerRoom)
 app.use('/user', routerUser)
 app.use('/clan', routerClan)
 app.use('/coder_clan', routerCoderClan)
+app.use('/auth', routerAuth)
 
 start()
 

@@ -1,4 +1,5 @@
 import type { Request, Response } from "express";
+import { UniqueConstraintError } from "sequelize";
 import User from "../models/user.model.js";
 import Address_user from "../models/address_user.model.js";
 import Identification from "../models/identification.model.js";
@@ -18,6 +19,8 @@ const getUser = async (req:Request, res:Response) => {
 
 const createUser = async (req: Request, res: Response) => {
 
+    const transaction = await db.transaction()
+
     try {
 
         const {
@@ -34,9 +37,7 @@ const createUser = async (req: Request, res: Response) => {
             role_id
         } = req.body
 
-        const transaction = await db.transaction()
-
-        const newAddres = await Address_user.create(
+        const newAddress = await Address_user.create(
             {
                 city_id,
                 address
@@ -60,7 +61,7 @@ const createUser = async (req: Request, res: Response) => {
                 password_hash: password,
                 phone,
                 birth_date,
-                addres_user_id: newAddres.id,
+                address_user_id: newAddress.id,
                 identification_id: newIdentification.id,
                 role_id
             },
@@ -71,8 +72,20 @@ const createUser = async (req: Request, res: Response) => {
         res.status(201).json({message: 'Usuario creado con exito', newUser})
 
     } catch(error) {
+        
+        await transaction.rollback();
         console.error(error)
-        res.status(500).json({message: 'Error en el servidor.'})
+        
+        if (error instanceof UniqueConstraintError) { 
+            
+            if (error.fields?.number) { 
+                return res.status(409).json({ message: "El número de identificación ya existe." })
+            } 
+                
+            if (error.fields?.email) { 
+                return res.status(409).json({ message: "El correo electrónico ya está registrado." })
+            } 
+        }
     }
 }
 
