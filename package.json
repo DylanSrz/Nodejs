@@ -4,7 +4,7 @@
   "description": "Estructura de trabajo para Node.js ya completada y lista para desarrollar. Repositorio para practicar diferentes temas de desarrollo por ramas. Una rama un contexto diferente.",
   "main": "app.js",
   "scripts": {
-    "dev": "npx tsx watch ./src/app.ts",
+    "dev": "npx tsx watch src/app.ts",
     "migrate": "tsx src/config/migrate-up.ts",
     "migrate:reverse": "tsx src/config/migrate-down.ts",
     "migrate:reset": "tsx src/config/migrate-reset.ts",

@@ -1,20 +1,57 @@
-name: postgres_riwiHack
+name: container_riwiHack
 
 services:
-  postgres:
-    image: postgres:16
-    container_name: postgres-riwiHack
+  api:
+    build:
+      context: .
+      target: development
+
+    env_file:
+      - .env
 
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin1234
-      POSTGRES_DB: riwiHack
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
 
     ports:
-      - "5433:5432"
+      - "${PORT}:${PORT}"
 
     volumes:
-      - postgres_data_riwiHack:/var/lib/postgresql/data
+      - .:/app
+      - api_node_modules:/app/node_modules
+
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:16
+    container_name: postgres-riwiHack
+    restart: unless-stopped
+    
+    ports:
+      - "${DATABASE_PORT}:${DATABASE_PORT}"
+
+    environment:
+      POSTGRES_USER: "${DATABASE_USER}"
+      POSTGRES_PASSWORD: "${DATABASE_PASSWORD}"
+      POSTGRES_DB: "${DATABASE_NAME}"
+
+
+    volumes:
+      - db_riwiHack:/var/lib/postgresql/data
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${DATABASE_USER} -d ${DATABASE_NAME}"
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
 volumes:
-  postgres_data_riwiHack:
+  db_riwiHack:
+  api_node_modules:
