@@ -47,6 +47,16 @@ Coder_clan.init(
             // Campo obligatorio.
             allowNull: false,
 
+            // Primera mitad de la clave primaria compuesta.
+            //
+            // La tabla no tiene un id propio: su identidad es
+            // la pareja (clan_id, coder_id).
+            //
+            // Sin esta marca Sequelize asumiria una columna
+            // "id" que no existe en la tabla, y cualquier
+            // consulta al modelo fallaria.
+            primaryKey: true,
+
             // Foreign Key:
             // coder_clan.clan_id
             //          ↓
@@ -62,6 +72,9 @@ Coder_clan.init(
 
             // Campo obligatorio.
             allowNull: false,
+
+            // Segunda mitad de la clave primaria compuesta.
+            primaryKey: true,
 
             // Foreign Key:
             // coder_clan.coder_id

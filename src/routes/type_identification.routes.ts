@@ -1,7 +1,18 @@
-import express, { type Request, type Response } from 'express';
-import Type_identification from '../models/type_identification.model.js';
+import express from 'express';
+import {
+    getTypeIdentifications,
+    getTypeIdentificationById,
+    createTypeIdentification,
+    updateTypeIdentification,
+    deleteTypeIdentification,
+} from '../controllers/type_identification.controller.js';
+import { validateParams, validateRequest } from '../middlewares/validate_request.js';
+import { createTypeIdentificationSchema, updateTypeIdentificationSchema } from '../dto/type_identification.schema.js';
+import { idParamSchema } from '../dto/common.schema.js';
+import { checkRole, verifyToken } from '../middlewares/verifyToken.js';
 
 const router = express.Router();
+
 
 /**
  * @openapi
@@ -13,28 +24,164 @@ const router = express.Router();
  *     security: []
  *     responses:
  *       200:
- *         description: Listado de tipos de identificación.
+ *         description: Tipos de identificación encontrados.
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/TypeIdentification'
+ *               type: object
+ *               properties:
+ *                 message: { type: string, example: Tipos de identificación encontrados. }
+ *                 type_identifications:
+ *                   type: array
+ *                   items: { $ref: '#/components/schemas/TypeIdentification' }
  *       500:
  *         $ref: '#/components/responses/ServerError'
  */
-router.get('/', async (req: Request, res: Response) => {
+router.get('/', getTypeIdentifications);
 
-    try {
 
-        const type_identification = await Type_identification.findAll()
+/**
+ * @openapi
+ * /type_identification/{id}:
+ *   get:
+ *     tags: [Catálogos]
+ *     summary: Consulta un tipo de identificación por su id
+ *     security: []
+ *     parameters:
+ *       - $ref: '#/components/parameters/IdParam'
+ *     responses:
+ *       200:
+ *         description: Tipo de identificación encontrado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message: { type: string, example: Tipo de identificación encontrado. }
+ *                 type_identification: { $ref: '#/components/schemas/TypeIdentification' }
+ *       400: { $ref: '#/components/responses/BadRequest' }
+ *       404: { $ref: '#/components/responses/NotFound' }
+ */
+router.get('/:id', validateParams(idParamSchema), getTypeIdentificationById);
 
-        res.json(type_identification)
 
-    } catch(error) {
-        console.log(error)
-        res.status(500).json({message: 'Error en el servidor.'})
-    }
-});
+/**
+ * @openapi
+ * /type_identification:
+ *   post:
+ *     tags: [Catálogos]
+ *     summary: Crea un tipo de identificación
+ *     description: Requiere token con rol admin.
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema: { $ref: '#/components/schemas/CreateTypeIdentificationRequest' }
+ *     responses:
+ *       201:
+ *         description: Tipo de identificación creado con éxito.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message: { type: string, example: Tipo de identificación creado con éxito. }
+ *                 newTypeIdentification: { $ref: '#/components/schemas/TypeIdentification' }
+ *       400: { $ref: '#/components/responses/BadRequest' }
+ *       401: { $ref: '#/components/responses/Unauthorized' }
+ *       403: { $ref: '#/components/responses/Forbidden' }
+ *       404: { $ref: '#/components/responses/NotFound' }
+ *       409: { $ref: '#/components/responses/Conflict' }
+ */
+router.post(
+    '/',
+    verifyToken,
+    checkRole('admin'),
+    validateRequest(createTypeIdentificationSchema),
+    createTypeIdentification
+);
+
+
+/**
+ * @openapi
+ * /type_identification/{id}:
+ *   put:
+ *     tags: [Catálogos]
+ *     summary: Actualiza un tipo de identificación
+ *     description: |
+ *       Requiere token con rol admin.
+ *
+ *       Todos los campos son opcionales, pero el cuerpo no puede estar vacío.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - $ref: '#/components/parameters/IdParam'
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema: { $ref: '#/components/schemas/CreateTypeIdentificationRequest' }
+ *     responses:
+ *       200:
+ *         description: Tipo de identificación actualizado con éxito.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message: { type: string, example: Tipo de identificación actualizado con éxito. }
+ *                 type_identification: { $ref: '#/components/schemas/TypeIdentification' }
+ *       400: { $ref: '#/components/responses/BadRequest' }
+ *       401: { $ref: '#/components/responses/Unauthorized' }
+ *       403: { $ref: '#/components/responses/Forbidden' }
+ *       404: { $ref: '#/components/responses/NotFound' }
+ *       409: { $ref: '#/components/responses/Conflict' }
+ */
+router.put(
+    '/:id',
+    verifyToken,
+    checkRole('admin'),
+    validateParams(idParamSchema),
+    validateRequest(updateTypeIdentificationSchema),
+    updateTypeIdentification
+);
+
+
+/**
+ * @openapi
+ * /type_identification/{id}:
+ *   delete:
+ *     tags: [Catálogos]
+ *     summary: Elimina un tipo de identificación
+ *     description: |
+ *       Requiere token con rol admin.
+ *
+ *       Responde 409 si alguna identificación usa ese tipo.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - $ref: '#/components/parameters/IdParam'
+ *     responses:
+ *       200:
+ *         description: Tipo de identificación eliminado con éxito.
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/MessageResponse' }
+ *       400: { $ref: '#/components/responses/BadRequest' }
+ *       401: { $ref: '#/components/responses/Unauthorized' }
+ *       403: { $ref: '#/components/responses/Forbidden' }
+ *       404: { $ref: '#/components/responses/NotFound' }
+ *       409: { $ref: '#/components/responses/Conflict' }
+ */
+router.delete(
+    '/:id',
+    verifyToken,
+    checkRole('admin'),
+    validateParams(idParamSchema),
+    deleteTypeIdentification
+);
+
 
 export default router;

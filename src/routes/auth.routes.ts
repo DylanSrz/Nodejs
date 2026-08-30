@@ -1,5 +1,8 @@
 import express from 'express'
-import {loginController } from '../controllers/auth.controller.js'
+import { loginController, meController } from '../controllers/auth.controller.js'
+import { validateRequest } from '../middlewares/validate_request.js'
+import { loginSchema } from '../dto/auth.schema.js'
+import { verifyToken } from '../middlewares/verifyToken.js'
 
 const router = express.Router()
 
@@ -10,9 +13,9 @@ const router = express.Router()
  *     tags: [Autenticación]
  *     summary: Inicia sesión y devuelve un JWT
  *     description: |
- *       Verifica el correo, compara la contraseña con bcrypt y resuelve el rol
- *       asociado al usuario. Si todo es correcto firma un JWT con el payload
- *       `{ id, role }` y una expiración de 1 hora.
+ *       Verifica el correo, comprueba que el usuario esté activo, compara la
+ *       contraseña con bcrypt y resuelve el rol asociado. Si todo es correcto
+ *       firma un JWT con el payload `{ id, role }` y una expiración de 1 hora.
  *
  *       Este endpoint es público.
  *     security: []
@@ -29,32 +32,58 @@ const router = express.Router()
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/LoginResponse'
- *       401:
- *         description: Error inesperado al procesar las credenciales.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/MessageResponse'
- *             example:
- *               message: Credential invalidddd
+ *       400:
+ *         $ref: '#/components/responses/BadRequest'
  *       403:
- *         description: El correo no existe, la contraseña no es válida o el rol no existe.
+ *         description: Credenciales inválidas, usuario inactivo o rol inexistente.
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/MessageResponse'
  *             examples:
  *               correoInexistente:
- *                 value:
- *                   message: correo no existe.
+ *                 value: { message: correo no existe. }
+ *               usuarioInactivo:
+ *                 value: { message: El usuario está inactivo. }
  *               passwordInvalida:
- *                 value:
- *                   message: password no es valida.
+ *                 value: { message: password no es valida. }
  *               rolInexistente:
- *                 value:
- *                   message: Rol no existe
+ *                 value: { message: Rol no existe }
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
  */
 // para hacer login y obtener el JWT
-router.post('/login', loginController)
+router.post('/login', validateRequest(loginSchema), loginController)
+
+
+/**
+ * @openapi
+ * /auth/me:
+ *   get:
+ *     tags: [Autenticación]
+ *     summary: Devuelve el perfil del usuario autenticado
+ *     description: |
+ *       Resuelve el usuario a partir del id que viaja dentro del token, así que
+ *       no hace falta conocer su uuid.
+ *
+ *       Sirve para comprobar rápidamente que un token sigue siendo válido y con
+ *       qué rol.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Perfil del usuario autenticado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message: { type: string, example: Perfil del usuario autenticado. }
+ *                 user: { $ref: '#/components/schemas/User' }
+ *       401: { $ref: '#/components/responses/Unauthorized' }
+ *       403: { $ref: '#/components/responses/Forbidden' }
+ *       404: { $ref: '#/components/responses/NotFound' }
+ */
+router.get('/me', verifyToken, meController)
 
 export default router

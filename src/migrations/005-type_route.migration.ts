@@ -14,7 +14,7 @@ export async function up({context}: {context: QueryInterface}) {
             allowNull: false,
             unique: true,
             validate: {
-                isIn: [["basica", "avanzada"]],
+                isIn: [["ruta básica", "ruta avanzada"]],
             }
         }
     })

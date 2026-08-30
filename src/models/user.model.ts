@@ -229,14 +229,26 @@ User.beforeCreate(async (user) => {
 // Se ejecuta antes de actualizar un usuario.
 //
 // Mantiene nombre, apellido y email
-// en minúsculas.
-User.beforeUpdate((user) => {
+// en minúsculas, y rehashea la contraseña
+// cuando llega una nueva.
+User.beforeUpdate(async (user) => {
 
     user.first_name = user.first_name.toLowerCase();
 
     user.last_name = user.last_name.toLowerCase();
 
     user.email = user.email.toLowerCase();
+
+    // El controlador asigna la contraseña en claro sobre
+    // password_hash; aquí se convierte en hash.
+    //
+    // "changed" es imprescindible: sin esa comprobación,
+    // cualquier actualización volvería a hashear el hash ya
+    // guardado y la contraseña dejaría de funcionar.
+    if (user.changed("password_hash")) {
+
+        user.password_hash = await bcrypt.hash(user.password_hash, 10);
+    }
 });
 
 

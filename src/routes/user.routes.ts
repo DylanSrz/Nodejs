@@ -1,10 +1,19 @@
 import express from 'express';
-import { createUser, getUser, updateStatus } from '../controllers/user.controller.js';
-import { validateRequest } from '../middlewares/validate_request.js';
-import { createUserSchema } from '../dto/user.schema.js';
+import {
+    createUser,
+    getUser,
+    getUserById,
+    updateUser,
+    updateStatus,
+    deleteUser,
+} from '../controllers/user.controller.js';
+import { validateParams, validateRequest } from '../middlewares/validate_request.js';
+import { createUserSchema, updateUserSchema } from '../dto/user.schema.js';
+import { idParamSchema } from '../dto/common.schema.js';
 import { checkRole, verifyToken} from '../middlewares/verifyToken.js';
 
 const router = express.Router();
+
 
 /**
  * @openapi
@@ -12,6 +21,10 @@ const router = express.Router();
  *   get:
  *     tags: [Usuarios]
  *     summary: Lista todos los usuarios
+ *     description: |
+ *       Cada usuario llega con su rol, su dirección y su identificación.
+ *
+ *       La columna password_hash nunca se incluye.
  *     security: []
  *     responses:
  *       200:
@@ -21,18 +34,41 @@ const router = express.Router();
  *             schema:
  *               type: object
  *               properties:
- *                 message:
- *                   type: string
- *                   example: Usuarios encontrados.
+ *                 message: { type: string, example: Usuarios encontrados. }
  *                 users:
  *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/User'
+ *                   items: { $ref: '#/components/schemas/User' }
  *       500:
  *         $ref: '#/components/responses/ServerError'
  */
 // GET // listar todos los usuarios...
 router.get('/', getUser);
+
+
+/**
+ * @openapi
+ * /user/{id}:
+ *   get:
+ *     tags: [Usuarios]
+ *     summary: Consulta un usuario por su id
+ *     security: []
+ *     parameters:
+ *       - $ref: '#/components/parameters/IdParam'
+ *     responses:
+ *       200:
+ *         description: Usuario encontrado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message: { type: string, example: Usuario encontrado. }
+ *                 user: { $ref: '#/components/schemas/User' }
+ *       400: { $ref: '#/components/responses/BadRequest' }
+ *       404: { $ref: '#/components/responses/NotFound' }
+ */
+router.get('/:id', validateParams(idParamSchema), getUserById);
+
 
 /**
  * @openapi
@@ -41,23 +77,24 @@ router.get('/', getUser);
  *     tags: [Usuarios]
  *     summary: Crea un usuario con su dirección e identificación
  *     description: |
+ *       Requiere token con rol admin.
+ *
  *       Inserta la dirección, la identificación y el usuario dentro de una
- *       única transacción: si algo falla se revierte todo.
+ *       única transacción: si algo falla no queda nada a medias.
  *
  *       La contraseña llega en el campo `password` y se persiste hasheada
- *       con bcrypt en `password_hash` mediante el hook `beforeCreate` del
- *       modelo `User`.
+ *       con bcrypt en `password_hash`.
  *
- *       Cadena de middlewares:
- *       `validateRequest(createUserSchema)` → `verifyToken` → `checkRole("admin")`.
+ *       Antes de abrir la transacción se comprueba que existan la ciudad,
+ *       el tipo de identificación y el rol, y que el correo y el número de
+ *       documento estén libres.
  *     security:
  *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/CreateUserRequest'
+ *           schema: { $ref: '#/components/schemas/CreateUserRequest' }
  *     responses:
  *       201:
  *         description: Usuario creado con éxito.
@@ -66,37 +103,84 @@ router.get('/', getUser);
  *             schema:
  *               type: object
  *               properties:
- *                 message:
- *                   type: string
- *                   example: Usuario creado con exito
- *                 newUser:
- *                   $ref: '#/components/schemas/User'
- *       400:
- *         description: El cuerpo no supera la validación de Zod.
+ *                 message: { type: string, example: Usuario creado con exito }
+ *                 newUser: { $ref: '#/components/schemas/User' }
+ *       400: { $ref: '#/components/responses/BadRequest' }
+ *       401: { $ref: '#/components/responses/Unauthorized' }
+ *       403: { $ref: '#/components/responses/Forbidden' }
+ *       404:
+ *         description: La ciudad, el tipo de identificación o el rol no existen.
  *         content:
  *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ValidationErrorResponse'
- *       401:
- *         $ref: '#/components/responses/Unauthorized'
- *       403:
- *         $ref: '#/components/responses/Forbidden'
+ *             schema: { $ref: '#/components/schemas/MessageResponse' }
  *       409:
- *         description: El número de identificación o el correo ya están registrados.
+ *         description: El correo o el número de identificación ya están registrados.
  *         content:
  *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/MessageResponse'
+ *             schema: { $ref: '#/components/schemas/MessageResponse' }
  *             examples:
  *               identificacionDuplicada:
- *                 value:
- *                   message: El número de identificación ya existe.
+ *                 value: { message: El número de identificación ya existe. }
  *               emailDuplicado:
- *                 value:
- *                   message: El correo electrónico ya está registrado.
+ *                 value: { message: El correo electrónico ya está registrado. }
  */
 // POST // crear un nuevo usuario...
-router.post('/', validateRequest(createUserSchema), verifyToken, checkRole("admin"),createUser)
+router.post(
+    '/',
+    verifyToken,
+    checkRole("admin"),
+    validateRequest(createUserSchema),
+    createUser
+);
+
+
+/**
+ * @openapi
+ * /user/{id}:
+ *   put:
+ *     tags: [Usuarios]
+ *     summary: Actualiza un usuario
+ *     description: |
+ *       Requiere token con rol admin.
+ *
+ *       Solo toca columnas de la tabla user. La dirección y la identificación
+ *       se editan por `/address_user` y `/identification`.
+ *
+ *       Si se envía `password`, se vuelve a hashear antes de guardarla.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - $ref: '#/components/parameters/IdParam'
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema: { $ref: '#/components/schemas/UpdateUserRequest' }
+ *     responses:
+ *       200:
+ *         description: Usuario actualizado con éxito.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message: { type: string, example: Usuario actualizado con éxito. }
+ *                 user: { $ref: '#/components/schemas/User' }
+ *       400: { $ref: '#/components/responses/BadRequest' }
+ *       401: { $ref: '#/components/responses/Unauthorized' }
+ *       403: { $ref: '#/components/responses/Forbidden' }
+ *       404: { $ref: '#/components/responses/NotFound' }
+ *       409: { $ref: '#/components/responses/Conflict' }
+ */
+router.put(
+    '/:id',
+    verifyToken,
+    checkRole('admin'),
+    validateParams(idParamSchema),
+    validateRequest(updateUserSchema),
+    updateUser
+);
+
 
 /**
  * @openapi
@@ -104,37 +188,84 @@ router.post('/', validateRequest(createUserSchema), verifyToken, checkRole("admi
  *   put:
  *     tags: [Usuarios]
  *     summary: Alterna el estado activo de un usuario
- *     description: Invierte el valor del campo `is_active` del usuario indicado.
- *     security: []
+ *     description: |
+ *       Requiere token con rol admin.
+ *
+ *       Invierte el valor de `is_active`, así que sirve tanto para dar de baja
+ *       como para reactivar.
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *           format: uuid
- *         description: UUID del usuario.
+ *       - $ref: '#/components/parameters/IdParam'
  *     responses:
- *       201:
+ *       200:
  *         description: Estado actualizado.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/MessageResponse'
- *             example:
- *               message: User status updated to false
- *       404:
- *         description: El usuario no existe.
+ *               type: object
+ *               properties:
+ *                 message: { type: string, example: User status updated to false }
+ *                 user: { $ref: '#/components/schemas/User' }
+ *       400: { $ref: '#/components/responses/BadRequest' }
+ *       401: { $ref: '#/components/responses/Unauthorized' }
+ *       403: { $ref: '#/components/responses/Forbidden' }
+ *       404: { $ref: '#/components/responses/NotFound' }
+ */
+// PUT // cambiar el estado de un usuario (is_active)
+router.put(
+    '/status/:id',
+    verifyToken,
+    checkRole('admin'),
+    validateParams(idParamSchema),
+    updateStatus
+);
+
+
+/**
+ * @openapi
+ * /user/{id}:
+ *   delete:
+ *     tags: [Usuarios]
+ *     summary: Da de baja a un usuario (borrado lógico)
+ *     description: |
+ *       Requiere token con rol admin.
+ *
+ *       No borra la fila: marca `is_active` en false. Un usuario está
+ *       referenciado por `clan.tl_id` y por `coder_clan.coder_id`, así que
+ *       borrarlo de verdad destruiría el historial de esos clanes.
+ *
+ *       Un usuario inactivo no puede iniciar sesión.
+ *
+ *       Responde 409 si el usuario ya está inactivo, o si es team leader de
+ *       un clan: en ese caso hay que reasignar el clan primero.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - $ref: '#/components/parameters/IdParam'
+ *     responses:
+ *       200:
+ *         description: Usuario desactivado con éxito.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/MessageResponse'
- *             example:
- *               message: User not found
- *       500:
- *         $ref: '#/components/responses/ServerError'
+ *               type: object
+ *               properties:
+ *                 message: { type: string, example: Usuario desactivado con éxito. }
+ *                 user: { $ref: '#/components/schemas/User' }
+ *       400: { $ref: '#/components/responses/BadRequest' }
+ *       401: { $ref: '#/components/responses/Unauthorized' }
+ *       403: { $ref: '#/components/responses/Forbidden' }
+ *       404: { $ref: '#/components/responses/NotFound' }
+ *       409: { $ref: '#/components/responses/Conflict' }
  */
-// PUT // cambiar el estado de un usuario (is_active)
-router.put('/status/:id', updateStatus)
+router.delete(
+    '/:id',
+    verifyToken,
+    checkRole('admin'),
+    validateParams(idParamSchema),
+    deleteUser
+);
+
 
 export default router;

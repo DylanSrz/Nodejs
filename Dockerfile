@@ -730,4 +730,4 @@ USER node
 # Again, the JSON-array form is used so Docker starts Node.js
 # directly as the main container process.
 #
-CMD ["node", "dist/index.js"]
+CMD ["node", "dist/app.js"]

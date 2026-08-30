@@ -1,0 +1,36 @@
+{
+  // Configuración usada solo para revisar los tipos de las
+  // pruebas.
+  //
+  // El tsconfig.json principal deja fuera la carpeta tests,
+  // porque "npm run build" no debe compilar las pruebas
+  // dentro de dist.
+  //
+  // Pero las pruebas también se benefician del chequeo de
+  // tipos, así que este archivo las incluye y no emite nada:
+  //
+  //     npm run test:types
+  //
+  "extends": "./tsconfig.json",
+
+  "compilerOptions": {
+    // El tsconfig principal fija rootDir en ./src para que el
+    // build sea limpio. Aquí hace falta abarcar también
+    // tests/, así que la raíz sube un nivel.
+    //
+    // No afecta a la salida: esta configuración no emite nada.
+    "rootDir": ".",
+
+    // Solo verificar; no generar archivos.
+    "noEmit": true,
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": false,
+
+    // Los globals de Jest (describe, it, expect) vienen de
+    // @types/jest.
+    "types": ["node", "jest"]
+  },
+
+  "include": ["src", "tests"]
+}

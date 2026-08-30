@@ -49,7 +49,7 @@ Type_route.init(
             // Esto NO crea un ENUM en PostgreSQL.
             // Es una validación realizada por Sequelize.
             validate: {
-                isIn: [["basica", "avanzada"]],
+                isIn: [["ruta básica", "ruta avanzada"]],
             },
         },
     },
